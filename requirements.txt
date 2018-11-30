@@ -1,0 +1,5 @@
+requests
+pytest
+pytest-pudb
+pytest-watch
+pytest-xdist
