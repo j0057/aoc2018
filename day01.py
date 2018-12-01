@@ -11,10 +11,12 @@ def day01b(changes):
             return freq
         seen.add(freq)
 
+def test_01b_ex0(): assert day01a([+1, -2, +3, +1]) == 0
 def test_01a_ex1(): assert day01a([+1, +1, +1]) == 3
 def test_01a_ex2(): assert day01a([+1, +1, -2]) == 0
 def test_01a_ex3(): assert day01a([-1, -2, -3]) == -6
 
+def test_01b_ex0(): assert day01b([+1, -2, +3, +1]) == 2
 def test_01b_ex1(): assert day01b([-1, +1]) == 0
 def test_01b_ex2(): assert day01b([+3, +3, +4, -2, -4]) == 10
 def test_01b_ex3(): assert day01b([-6, +3, +8, +5, -6]) == 5
