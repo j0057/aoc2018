@@ -5,11 +5,10 @@ def day02a(ids):
     return sum(2 in c.values() for c in counts) * sum(3 in c.values() for c in counts)
 
 def day02b(ids):
-    common = sorted((''.join(a for a,b in zip(id_a, id_b) if a==b)
-                     for id_a in ids
-                     for id_b in ids
-                     if id_a != id_b), key=len, reverse=True)
-    return common[0]
+    return max((''.join(a for a,b in zip(id_a, id_b) if a==b)
+               for id_a in ids
+               for id_b in ids
+               if id_a != id_b), key=len)
 
 def test_02_ex1(): assert day02a('abcdef bababc abbcde abcccd aabcdd abcdee ababab'.split()) == 12
 def test_02_ex2(): assert day02b('abcde fghij klmno pqrst fguij axcye wvxyz'.split()) == 'fgij'
