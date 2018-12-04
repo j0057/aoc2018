@@ -11,7 +11,7 @@ def day01b(changes):
             return freq
         seen.add(freq)
 
-def test_01b_ex0(): assert day01a([+1, -2, +3, +1]) == 0
+def test_01a_ex0(): assert day01a([+1, -2, +3, +1]) == 3
 def test_01a_ex1(): assert day01a([+1, +1, +1]) == 3
 def test_01a_ex2(): assert day01a([+1, +1, -2]) == 0
 def test_01a_ex3(): assert day01a([-1, -2, -3]) == -6
