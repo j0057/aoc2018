@@ -1,4 +1,4 @@
-use day01;
+mod day01;
 
 fn main() {
 }
