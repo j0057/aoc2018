@@ -1,3 +1,4 @@
+use day01;
+
 fn main() {
-    println!("Hello, world!")
 }
