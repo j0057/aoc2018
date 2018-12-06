@@ -1,8 +1,8 @@
-fn day01a(m: &[i64]) -> i64 {
+pub fn day01a(m: &[i64]) -> i64 {
     m.iter().sum()
 }
 
-mod util {
+pub mod util {
     use std::fs::File;
     use std::io;
     use std::io::BufRead;
