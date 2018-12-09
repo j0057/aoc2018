@@ -103,3 +103,19 @@ constructor uses `itertools.islice` to pluck values from the iterator.
 
 _"What is the value of the root node?"_ – could basically add the rules without
 too much thinking.
+
+##  Day 9: Marble Mania
+
+_"What is the winning Elf's score?"_ – pretty straightforward implementation
+using a standard list.
+
+_"What would the new winning Elf's score be if the number of the last marble
+were 100 times larger?"_ – it turns out using `list.insert` and `list.pop`
+doesn't scale due to all the copying. Got referred to the `blist` package that
+acts as a fast drop-in replacement for Python's list. That one did get the job
+done. It did throw some warnings though and it's not compatible with PyPy, so I
+did the work to implement a [Doubly-linked List][91]. I opted for the 'hash
+linking' method, which cost me half an hour of pen-and-paper debugging. Also,
+it does take a good 5s to run...
+
+[91]: https://en.m.wikipedia.org/wiki/Linked_list#Hash_linking

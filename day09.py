@@ -1,19 +1,25 @@
 import re
-from blist import blist
+from functools import reduce
 
 def parse(text):
     return [*map(int, re.findall(r'-?\d+', text))]
 
 def day09a(players, marbles):
-    S, C = [0]*players, blist([0])
-    p, i = 0, 1
+    S = [0]*players
+    P, N = [0], [0]
+    p, i = 0, 0
     for m in range(1, marbles+1):
         if m % 23 == 0:
-            i = (i-7) % len(C)
-            S[p] += m + C.pop(i)
+            i = reduce(lambda a, _: P[a], range(6), i)
+            N.append(-1)
+            P.append(-1)
+            S[p] += m + i
+            N[P[i]], P[N[i]] = N[i], P[i]
         else:
-            i = (i+2) % len(C)
-            C.insert(i, m)
+            i = reduce(lambda a, _: N[a], range(2), i)
+            N.append(N[i])
+            P.append(i)
+            N[P[m]], P[N[m]] = m, m
         p = (p+1) % len(S)
     return max(S)
 
