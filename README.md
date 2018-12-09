@@ -118,4 +118,7 @@ did the work to implement a [Doubly-linked List][91]. I opted for the 'hash
 linking' method, which cost me half an hour of pen-and-paper debugging. Also,
 it does take a good 5s to run...
 
+Update: The solution from the reddit solution thread using `collections.deque`
+runs in 1.05s and reads much cleaner.
+
 [91]: https://en.m.wikipedia.org/wiki/Linked_list#Hash_linking

@@ -1,27 +1,21 @@
+from collections import defaultdict, deque
 import re
-from functools import reduce
 
 def parse(text):
     return [*map(int, re.findall(r'-?\d+', text))]
 
 def day09a(players, marbles):
-    S = [0]*players
-    P, N = [0], [0]
-    p, i = 0, 0
+    S = defaultdict(int)
+    C = deque([0])
     for m in range(1, marbles+1):
         if m % 23 == 0:
-            i = reduce(lambda a, _: P[a], range(6), i)
-            N.append(-1)
-            P.append(-1)
-            S[p] += m + i
-            N[P[i]], P[N[i]] = N[i], P[i]
+            C.rotate(7)
+            S[m % players] += m + C.pop()
+            C.rotate(-1)
         else:
-            i = reduce(lambda a, _: N[a], range(2), i)
-            N.append(N[i])
-            P.append(i)
-            N[P[m]], P[N[m]] = m, m
-        p = (p+1) % len(S)
-    return max(S)
+            C.rotate(-1)
+            C.append(m)
+    return max(S.values(), default=0)
 
 def day09b(players, marbles):
     return day09a(players, marbles*100)
