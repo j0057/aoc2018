@@ -104,7 +104,7 @@ constructor uses `itertools.islice` to pluck values from the iterator.
 _"What is the value of the root node?"_ – could basically add the rules without
 too much thinking.
 
-##  Day 9: Marble Mania
+## Day 9: Marble Mania
 
 _"What is the winning Elf's score?"_ – pretty straightforward implementation
 using a standard list.
@@ -122,3 +122,13 @@ Update: The solution from the reddit solution thread using `collections.deque`
 runs in 1.05s and reads much cleaner.
 
 [91]: https://en.m.wikipedia.org/wiki/Linked_list#Hash_linking
+
+## Day 10: The Stars Align
+
+_"What message will eventually appear in the sky?"_ – Implemented using an
+iterator. No unit tests, so I'll just link a screenshot:
+
+![day 10 output](aoc2018-day10.png)
+
+_"Exactly how many seconds would they have needed to wait for that message to
+appear?"_ – That's the number of iterations minus two...
