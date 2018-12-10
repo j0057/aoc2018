@@ -1,5 +1,6 @@
 mod util;
 mod day01;
+mod day02;
 
 use std::collections;
 use std::io;
@@ -18,6 +19,11 @@ fn main() -> std::io::Result<()> {
     problems.insert("1B", || {
         let day01 = util::get_numbers("../input/day01.txt")?;
         Ok(day01::day01b(&day01).to_string())
+    });
+
+    problems.insert("2A", || {
+        let day02 = [String::from("Hello, world!")];
+        Ok(day02::day02a(&day02).to_string())
     });
 
     for &problem in problems.keys() {
