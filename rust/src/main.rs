@@ -3,12 +3,12 @@ mod day01;
 mod day02;
 
 use std::collections;
-use std::io;
+use std::error::Error;
 use std::time;
 
-type Solution = fn() -> io::Result<String>;
+type Solution = fn() -> Result<String, Box<Error>>;
 
-fn main() -> std::io::Result<()> {
+fn main() -> Result<(), Box<Error>> {
     let mut problems: collections::HashMap<&str, Solution> = collections::HashMap::new();
 
     problems.insert("1A", || {
@@ -29,12 +29,7 @@ fn main() -> std::io::Result<()> {
     for &problem in problems.keys() {
         let start = time::SystemTime::now();
         let answer = problems[problem]()?;
-        let elapsed = match start.elapsed() {
-            Ok(d) => d,
-            Err(e) => {
-                return Err(io::Error::new(io::ErrorKind::Other, e));
-            }
-        };
+        let elapsed = start.elapsed()?;
         let micros = elapsed.as_secs() * 1_000_000 + (elapsed.subsec_micros() as u64);
         println!("problem: {:>3}; time: {:9} μs, answer: {}", problem, micros, answer);
     }
