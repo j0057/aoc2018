@@ -44,7 +44,7 @@ mod test {
     }
 
     #[test]
-    fn test01a() -> std::io::Result<()> {
+    fn test01a() -> Result<(u8), Box<Error>> {
         let n = util::get_numbers("../input/day01.txt")?;
         let r = super::day01a(&n);
         assert_eq!(r, 508);
@@ -77,7 +77,7 @@ mod test {
     }
 
     #[test]
-    fn test01b() -> std::io::Result<()> {
+    fn test01b() -> Result<(), Box<Error>> {
         let n = util::get_numbers("../input/day01.txt")?;
         let r = super::day01b(&n);
         assert_eq!(r, 549);
