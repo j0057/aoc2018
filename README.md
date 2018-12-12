@@ -132,3 +132,14 @@ iterator. No unit tests, so I'll just link a screenshot:
 
 _"Exactly how many seconds would they have needed to wait for that message to
 appear?"_ – That's the number of iterations minus two...
+
+## Day 11: Chronal Charge
+
+_"What is the X,Y coordinate of the top-left fuel cell of the 3x3 square with
+the largest total power?"_ – just `sum` with two loops.
+
+_"What is the X,Y,size identifier of the square witoh the largest total
+power?"_ – wouldn't complete with approach from part one, had to implement a
+[Summed-area table][11.1].
+
+[11.1]: https://en.wikipedia.org/wiki/Summed-area_table
