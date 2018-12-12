@@ -143,3 +143,12 @@ power?"_ – wouldn't complete with approach from part one, had to implement a
 [Summed-area table][11.1].
 
 [11.1]: https://en.wikipedia.org/wiki/Summed-area_table
+
+## Day 12: Subterranean Sustainability
+
+_"After 20 generations, what is the sum of the numbers of all pots which
+contain a plant?"_ – `collections.defaultdict` and `itertools.islice`, again.
+
+_"After fifty billion (50000000000) generations, what is the sum of the numbers
+of all pots which contain a plant?_" – visualisation based on `print()`, and
+add 499999999000 to every grown plant position on iteration #1000.

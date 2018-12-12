@@ -4,14 +4,16 @@ import re
 import sys
 from functools import reduce
 
+def iterate(state, new):
+    while 1:
+        yield state
+        state = new(state)
+
 def parse(lines):
     return [tuple(map(int, re.findall(r'-?\d+', line))) for line in lines]
 
 def move(points):
-    yield points[:]
-    while 1:
-        points = [(px+vx, py+vy, vx, vy) for (px, py, vx, vy) in points]
-        yield points
+    return iterate(points, lambda points: [(px+vx, py+vy, vx, vy) for (px, py, vx, vy) in points])
 
 def bbox(points):
     l, t = reduce(lambda a, b: map(min, zip(a, b)), [(x, y) for (x, y, _, _) in points])
