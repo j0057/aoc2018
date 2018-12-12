@@ -21,6 +21,8 @@ pub fn day01b(deltas: &[i64]) -> i64 {
 
 #[cfg(test)]
 mod test {
+    use std::error::Error;
+
     use util;
 
     #[test]
@@ -44,8 +46,8 @@ mod test {
     }
 
     #[test]
-    fn test01a() -> Result<(u8), Box<Error>> {
-        let n = util::get_numbers("../input/day01.txt")?;
+    fn test01a() -> Result<(), Box<Error>> {
+        let n = util::get_numbers("input/day01.txt")?;
         let r = super::day01a(&n);
         assert_eq!(r, 508);
         Ok(())
@@ -78,7 +80,7 @@ mod test {
 
     #[test]
     fn test01b() -> Result<(), Box<Error>> {
-        let n = util::get_numbers("../input/day01.txt")?;
+        let n = util::get_numbers("input/day01.txt")?;
         let r = super::day01b(&n);
         assert_eq!(r, 549);
         Ok(())

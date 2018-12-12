@@ -10,11 +10,11 @@ type Solution = fn() -> Result<String, Box<Error>>;
 fn get_puzzles() -> Vec<(u8, char, Solution)> {
     vec![
         (1, 'A', || {
-            let day01 = util::get_numbers("../input/day01.txt")?;
+            let day01 = util::get_numbers("input/day01.txt")?;
             Ok(day01::day01a(&day01).to_string())
         }),
         (1, 'B', || {
-            let day01 = util::get_numbers("../input/day01.txt")?;
+            let day01 = util::get_numbers("input/day01.txt")?;
             Ok(day01::day01b(&day01).to_string())
         }),
         (2, 'A', || {
