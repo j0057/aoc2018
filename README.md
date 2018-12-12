@@ -4,6 +4,11 @@ Python solutions to [Advent of Code 2018][1]. Pytest is needed to run the tests
 as well as my new Pytest plugin **pytest-aoc** ([GitHub][2], [PyPI][3]), to
 provide AoC test fixtures to the unit tests.
 
+To run the Python code:
+
+    python3.7 -m pip install -r requirements.txt
+    python3.7 -m pytest
+
 [1]: https://adventofcode.com/2018
 [2]: https://github.com/j0057/pytest-aoc
 [3]: https://pypi.org/project/pytest-aoc
@@ -128,7 +133,7 @@ runs in 1.05s and reads much cleaner.
 _"What message will eventually appear in the sky?"_ – Implemented using an
 iterator. No unit tests, so I'll just link a screenshot:
 
-![day 10 output](aoc2018-day10.png)
+![day 10 output](doc/aoc2018-day10.png)
 
 _"Exactly how many seconds would they have needed to wait for that message to
 appear?"_ – That's the number of iterations minus two...
