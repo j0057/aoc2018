@@ -57,8 +57,8 @@ but with an additional loop over the alphabet.
 ## Day 6: Chronal Coordinates
 
 _"What is the size of the largest area that isn't infinite?"_ – did some
-research on properly calculating [Voronoi diagrams][61], decided that the O(n
-log n) solution in [Fortune's Algorithm][62] looked like a lot of hard work,
+research on properly calculating [Voronoi diagrams][6.1], decided that the O(n
+log n) solution in [Fortune's Algorithm][6.2] looked like a lot of hard work,
 and went with the naive quadratic solution instead: for each cell, find the
 distances to all the points. For n=50, it runs fast enough on a Core i7-7700.
 
@@ -70,16 +70,16 @@ _"What is the size of the region containing all locations which have a total
 distance to all given coordinates of less than 10000?"_ – not aware of any
 algorithms here so went with brute force again.
 
-[61]: https://en.m.wikipedia.org/wiki/Voronoi_diagram
-[62]: https://en.m.wikipedia.org/wiki/Fortune%27s_algorithm
+[6.1]: https://en.m.wikipedia.org/wiki/Voronoi_diagram
+[6.2]: https://en.m.wikipedia.org/wiki/Fortune%27s_algorithm
 
 ## Day 7: The Sum of Its Parts
 
 _"In what order should the steps in your instructions be completed?"_ – this
-one was rather painful. I tried [Depth-First Search][71] recursively as well as
-iteratively, with the edges pointing from or to the dependencies, and got the
-wrong order every time. Found out I wanted a [Topological Sorting][72] instead,
-which I implemented using **Kahn's Algorithm**.
+one was rather painful. I tried [Depth-First Search][7.1] recursively as well
+as iteratively, with the edges pointing from or to the dependencies, and got
+the wrong order every time. Found out I wanted a [Topological Sorting][7.2]
+instead, which I implemented using **Kahn's Algorithm**.
 
 At least `itertools.chain` and `itertools.groupby` lessened the pain somewhat.
 
@@ -92,8 +92,8 @@ moment.
 Had to drag in `collections.defaultdict` again, to hold extremely hacky lambda
 function closures.
 
-[71]: https://en.m.wikipedia.org/wiki/Depth-first_search
-[72]: https://en.wikipedia.org/wiki/Topological_sorting
+[7.1]: https://en.m.wikipedia.org/wiki/Depth-first_search
+[7.2]: https://en.wikipedia.org/wiki/Topological_sorting
 
 ## Day 8: Memory Maneuver
 
@@ -114,14 +114,14 @@ were 100 times larger?"_ – it turns out using `list.insert` and `list.pop`
 doesn't scale due to all the copying. Got referred to the `blist` package that
 acts as a fast drop-in replacement for Python's list. That one did get the job
 done. It did throw some warnings though and it's not compatible with PyPy, so I
-did the work to implement a [Doubly-linked List][91]. I opted for the 'hash
+did the work to implement a [Doubly-linked List][9.1]. I opted for the 'hash
 linking' method, which cost me half an hour of pen-and-paper debugging. Also,
 it does take a good 5s to run...
 
 Update: The solution from the reddit solution thread using `collections.deque`
 runs in 1.05s and reads much cleaner.
 
-[91]: https://en.m.wikipedia.org/wiki/Linked_list#Hash_linking
+[9.1]: https://en.m.wikipedia.org/wiki/Linked_list#Hash_linking
 
 ## Day 10: The Stars Align
 
