@@ -157,3 +157,17 @@ contain a plant?"_ – `collections.defaultdict` and `itertools.islice`, again.
 _"After fifty billion (50000000000) generations, what is the sum of the numbers
 of all pots which contain a plant?_" – visualisation based on `print()`, and
 add 499999999000 to every grown plant position on iteration #1000.
+
+## Day 13: Mine Cart Madness
+
+_"To help prevent crashes, you'd like to know the location of the first
+crash."_ – parsed the text into a `defaultdict` (again) with a complex number
+for the coordinate as key, and the grid (without carts) as the value. Also
+parse the carts into a dictionary with a complex number as the key, and a tuple
+of (direction vector, next turn), both as complex numbers. This made it really
+ease to code the main loop.
+
+_"What is the location of the last cart at the end of the first tick where it
+is the only cart left?"_– I think it's a bug to clear the crash site at the
+beginning of each iteration, but the bug would only manifest if three carts
+crash in the same tick.
