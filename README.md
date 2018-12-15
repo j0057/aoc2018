@@ -171,3 +171,11 @@ _"What is the location of the last cart at the end of the first tick where it
 is the only cart left?"_– I think it's a bug to clear the crash site at the
 beginning of each iteration, but the bug would only manifest if three carts
 crash in the same tick.
+
+## Day 14: Chocolate Charts
+
+_"What are the scores of the ten recipes immediately after the number of
+recipes in your puzzle input?"_
+
+_"How many recipes appear on the scoreboard to the left of the score sequence
+in your puzzle input?"_
