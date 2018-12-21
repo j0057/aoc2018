@@ -1,128 +1,132 @@
 from itertools import count
 from dataclasses import dataclass
 from math import inf as INF
-from queue import Queue
 import sys
 
 import pytest
 
 @dataclass
 class Player:
-    team: int
-    health: int
+    health: int = 200
+    attack: int = 3
 
-def parse(lines):
-    G = {x+y*1j: char if char in '#.' else '.'
-         for (y, line) in enumerate(lines)
-         for (x, char) in enumerate(line)}
-    T = {x+y*1j: Player('EG'.index(char), 200)
-         for (y, line) in enumerate(lines)
-         for (x, char) in enumerate(line) if char in 'EG'}
-    return (G, T)
+class Elf(Player):
+    disp: str = 'E'
 
-def dijkstra(src, dst, grid, teams):
-    #from pudb import set_trace; set_trace()
-    open_set = {v for v in grid if grid[v] == '.'} ^ {*teams} | {src}
-    distance = {v: INF for v in open_set}
-    previous = {v: [] for v in open_set}
-    distance[src] = 0
+class Goblin(Player):
+    disp: str = 'G'
+
+def parse(lines, elf_attack=3):
+    return {x+y*1j: {'E': lambda s: Elf(attack=elf_attack),
+                     'G': lambda s: Goblin()}.get(char, str)(char)
+            for (y, line) in enumerate(lines)
+            for (x, char) in enumerate(line)}
+
+def distances(src, open_set):
+    distance = {src: 0}
     while open_set:
-        cur = min(open_set, key=lambda v: distance[v])
+        cur = min(open_set, key=lambda v: distance.get(v, INF))
         open_set.remove(cur)
-        for nxt in [cur+ofs for ofs in [-1j, -1, +1, +1j] if grid[cur+ofs] == '.' and (cur+ofs) not in teams]:
-            if nxt not in open_set:
-                continue
-            if distance[cur]+1 < distance[nxt]:
+        if cur not in distance:
+            continue
+        for nxt in [cur+ofs for ofs in [-1j, -1, +1, +1j] if (cur+ofs) in open_set]:
+            if distance[cur]+1 < distance.get(nxt, INF):
                 distance[nxt] = distance[cur]+1
-                previous[nxt] = [cur]
-            elif distance[cur]+1 == distance[nxt]:
-                previous[nxt] += [cur]
-    def reconstruct_path(previous, dst):
-        result = [dst]
-        while previous[dst]:
-            dst = min(previous[dst], key=lambda c: (c.imag, c.real))
-            result.insert(0, dst)
-        return result
-    return reconstruct_path(previous, dst)
+    return distance
 
-def day15(grid, teams):
-    w, h = max(int(c.real) for c in grid), max(int(c.imag) for c in grid)
+def day15(grid):
     for rnd in count(0):
-        yield rnd, grid, teams
-        for (pos, player) in sorted(teams.items(), key=lambda t: (t[0].imag, t[0].real)):
+        yield rnd, grid
+        for (pos, player) in sorted((t for t in grid.items() if isinstance(t[1], Player)),
+                                    key=lambda t: (t[0].imag, t[0].real)):
+            Enemy = {Elf: Goblin, Goblin: Elf}[type(player)]
             if player.health <= 0:
                 print(f"{pos} {player} is already dead")
-            adj = [pos+ofs for ofs in [-1j, -1, +1, +1j] if pos+ofs in teams and teams[pos+ofs].team == 1-player.team]
+                continue
+            if {type(p) for p in grid.values()} != {Elf, Goblin, str}:
+                print(f"only one team left, bailing out!!")
+                return
+            adj = [pos+o for o in [-1j, -1, +1, +1j] if isinstance(grid[pos+o], Enemy)]
             if not adj:
-                routes = [dijkstra(pos, dst, grid, teams)
-                          for (pos2, player2) in teams.items() if player2.team == 1-player.team
-                          for dst in [pos2-1j, pos2-1, pos2+1, pos2+1j]
-                          if grid[dst] == '.' and dst not in teams]
-                shortest = min((r for r in routes if r), default=None, key=len)
-                if not shortest:
+                dist = distances(pos, {c for c in grid if grid[c] == '.'} | {pos})
+                target = min((c+o for c in grid if isinstance(grid[c], Enemy)
+                                  for o in [-1j, -1, +1, +1j] if grid[c+o] == '.'),
+                                  key=lambda c: (dist.get(c, INF), c.imag, c.real),
+                                  default=None)
+                if dist.get(target, INF) == INF:
                     print(f"{pos} {player} waiting...")
                     continue
-                step = shortest[1]
+                dist = distances(target, {c for c in grid if grid[c] == '.'} | {target})
+                step = min((pos+o for o in [-1j, -1, 1, 1j] if grid[pos+o] == '.'),
+                           key=lambda c: dist.get(c, INF))
                 print(f"{pos} {player} move from {pos} to {step}")
                 grid[pos], grid[step] = grid[step], grid[pos]
-                teams[step] = teams.pop(pos)
                 pos = step
-            adj = [pos+ofs for ofs in [-1j, -1, +1, +1j] if pos+ofs in teams and teams[pos+ofs].team == 1-player.team]
+            adj = [pos+o for o in [-1j, -1, +1, +1j] if isinstance(grid[pos+o], Enemy)]
             if adj:
-                atk = min(adj, default=None, key=lambda c: teams[c].health)
-                print(f"{pos} {player} attacks {teams[atk]}")
-                teams[atk].health -= 3
-                if teams[atk].health <= 0:
-                    print(f"{teams[atk]} has died!")
-                    del teams[atk]
-            if len({p.team for p in teams.values()}) != 2:
-                print(f"only one team left, bailing out!! {teams}")
-                return
+                atk = min(adj, default=None, key=lambda c: grid[c].health)
+                print(f"{pos} {player} attacks {grid[atk]}")
+                grid[atk].health -= player.attack
+                if grid[atk].health <= 0:
+                    print(f"{grid[atk]} has died!")
+                    grid[atk] = '.'
 
-def day15a(grid, teams):
-    for rnd, grid, teams in day15(grid, teams):
-        print(f"\nround {rnd}: {teams}")
-        draw(grid, teams)
+def day15a(grid):
+    for rnd, grid in day15(grid):
+        print(f"\nAfter {rnd} round{'s' if rnd != 1 else ''}:")
+        draw(grid)
         print()
-    h = sum(p.health for p in teams.values())
+    h = sum(v.health for v in grid.values() if isinstance(v, Player))
     return (rnd, h, rnd * h)
 
-def draw(G, T):
-    P = lambda s: sys.stdout.buffer.write(s.encode('ascii'))
+def day15b(lines):
+    for elf_attack in count(4):
+        grid = parse(lines, elf_attack)
+        elfs = [v for v in grid.values() if isinstance(v, Elf)]
+        for rnd, grid in day15(grid):
+            if any(e.health <= 0 for e in elfs):
+                break
+        else:
+            if any(e.health <= 0 for e in elfs):
+                continue
+            health = sum(v.health for v in grid.values() if isinstance(v, Player))
+            return (elf_attack, rnd, health, rnd * health)
+
+def draw(G):
+    P = lambda s: sys.stdout.write(s)
     w, h = max(int(c.real) for c in G), max(int(c.imag) for c in G)
     for y in range(h+1):
         for x in range(w+1):
-            if x+y*1j in T:
-                P('EG'[T[x+y*1j].team])
-            else:
-                P(G[x+y*1j])
+            P(G[x+y*1j].disp if isinstance(G[x+y*1j], Player) else G[x+y*1j])
         P('  ')
-        P(', '.join(f"{'EG'[T[c].team]}({T[c].health})" for c in sorted((c for c in T if c.imag == y), key=lambda c: c.real)))
+        P(', '.join(f"{G[c].disp}({G[c].health})" for c in sorted(
+            (c for c in G if isinstance(G[c], Player) and c.imag == y),
+            key=lambda c: c.real)))
         P('\n')
 
-ex15a     = pytest.fixture(lambda: parse('#######|#E..G.#|#...#.#|#.G.#G#|#######'.split('|')))
-ex15b     = pytest.fixture(lambda: parse('#######|#.G...#|#...EG#|#.#.#G#|#..G#E#|#.....#|#######'.split('|')))
-ex15b_r24 = pytest.fixture(lambda: parse('#######|#..G..#|#...#.#|#.#####|#...#E#|#.....#|#######'.split('|')))
-ex15c     = pytest.fixture(lambda: parse('#######|#G..#E#|#E#E.E#|#G.##.#|#...#E#|#...E.#|#######'.split('|')))
-ex15d     = pytest.fixture(lambda: parse('#######|#E..EG#|#.#G.E#|#E.##E#|#G..#.#|#..E#.#|#######'.split('|')))
-ex15e     = pytest.fixture(lambda: parse('#######|#E.G#.#|#.#G..#|#G.#.G#|#G..#.#|#...E.#|#######'.split('|')))
-ex15f     = pytest.fixture(lambda: parse('#######|#.E...#|#.#..G#|#.###.#|#E#G#G#|#...#G#|#######'.split('|')))
-ex15g     = pytest.fixture(lambda: parse('#########|#G......#|#.E.#...#|#..##..G#|#...##..#|#...#...#|#.G...G.#|#.....G.#|#########'.split('|')))
+EX15A = '#######|#E..G.#|#...#.#|#.G.#G#|#######'.split('|')
+EX15B = '#######|#.G...#|#...EG#|#.#.#G#|#..G#E#|#.....#|#######'.split('|')
+EX15C = '#######|#G..#E#|#E#E.E#|#G.##.#|#...#E#|#...E.#|#######'.split('|')
+EX15D = '#######|#E..EG#|#.#G.E#|#E.##E#|#G..#.#|#..E#.#|#######'.split('|')
+EX15E = '#######|#E.G#.#|#.#G..#|#G.#.G#|#G..#.#|#...E.#|#######'.split('|')
+EX15F = '#######|#.E...#|#.#..G#|#.###.#|#E#G#G#|#...#G#|#######'.split('|')
+EX15G = '#########|#G......#|#.E.#...#|#..##..G#|#...##..#|#...#...#|#.G...G.#|#.....G.#|#########'.split('|')
 
+def test_15a_ex0(): assert isinstance(parse(EX15A)[2+3j], Goblin)
 
-def test_15_ex_a1(ex15a): assert ex15a[1][2+3j].team == 1
-def test_15_ex_a2(ex15a): assert dijkstra(1+1j, 3+1j, *ex15a) == [1+1j, 2+1j, 3+1j]
+def test_15a_ex1(): assert day15a(parse(EX15B)) == (47, 590, 27730)
+def test_15a_ex2(): assert day15a(parse(EX15C)) == (37, 982, 36334)
+def test_15a_ex3(): assert day15a(parse(EX15D)) == (46, 859, 39514)
+def test_15a_ex4(): assert day15a(parse(EX15E)) == (35, 793, 27755)
+def test_15a_ex5(): assert day15a(parse(EX15F)) == (54, 536, 28944)
+def test_15a_ex6(): assert day15a(parse(EX15G)) == (20, 937, 18740)
 
-def test_15_ex_b(ex15b): assert day15a(*ex15b) == (47, 590, 27730)
-#ef test_15_ex_c(ex15c): assert day15a(*ex15c) == (37, 982, 36334)
-#ef test_15_ex_d(ex15d): assert day15a(*ex15d) == (46, 859, 39514)
-#ef test_15_ex_e(ex15e): assert day15a(*ex15e) == (35, 793, 27755)
-#ef test_15_ex_e(ex15f): assert day15a(*ex15f) == (54, 536, 28944)
-#ef test_15_ex_e(ex15g): assert day15a(*ex15g) == (20, 937, 18740)
+def test_15b_ex1(): assert day15b(EX15B) == (15, 29, 172, 4988)
+def test_15b_ex2(): assert day15b(EX15D) == (4, 33, 948, 31284)
+def test_15b_ex3(): assert day15b(EX15E) == (15, 37, 94, 3478)
+def test_15b_ex5(): assert day15b(EX15F) == (12, 39, 166, 6474)
+def test_15b_ex6(): assert day15b(EX15G) == (34, 30, 38, 1140)
 
-def test_15_ex_b_r24(ex15b_r24):
-    # round 24: top G should move left not down ("the unit chooses the step which is first in reading order")
-    draw(*ex15b_r24)
-    assert dijkstra(3+1j, 5+5j, *ex15b_r24) == [3+1j, 2+1j, 1+1j, 1+2j, 1+3j, 1+4j, 2+4j, 3+4j, 3+5j, 4+5j, 5+5j]
+def test_15a(day15_lines): assert day15a(parse(day15_lines)) == (82, 2624, 215168)
 
-#ef test_15a(day15_lines): assert day15a(*parse(day15_lines)) == -1
+def test_15a(day15_lines): assert day15b(day15_lines) == (16, 42, 1247, 52374)
