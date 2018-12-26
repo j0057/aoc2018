@@ -18,7 +18,7 @@ fn get_puzzles() -> Vec<(u8, char, Solution)> {
             Ok(day01::day01b(&day01).to_string())
         }),
         (2, 'A', || {
-            let day02 = [String::from("Hello, world!")];
+            let day02 = util::get_lines("input/day02.txt")?;
             Ok(day02::day02a(&day02).to_string())
         }),
     ]
