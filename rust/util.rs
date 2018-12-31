@@ -2,6 +2,7 @@ use std::error;
 use std::fs::File;
 use std::io;
 use std::io::BufRead;
+use std::num::ParseIntError;
 
 pub fn get_lines(filename: &str) -> Result<Vec<String>, Box<error::Error>> {
     let file = File::open(filename)?;
@@ -10,10 +11,11 @@ pub fn get_lines(filename: &str) -> Result<Vec<String>, Box<error::Error>> {
     Ok(result)
 }
 
-pub fn get_numbers(filename: &str) -> Result<Vec<i64>, Box<error::Error>> {
+pub fn get_numbers<T>(filename: &str) -> Result<Vec<T>, Box<error::Error>>
+where T: std::str::FromStr<Err=ParseIntError> {
     let result = get_lines(filename)?
         .iter()
-        .map(|s| s.parse::<i64>())
-        .collect::<Result<Vec<i64>, std::num::ParseIntError>>()?;
+        .map(|s| s.parse::<T>())
+        .collect::<Result<Vec<T>, ParseIntError>>()?;
     Ok(result)
 }
