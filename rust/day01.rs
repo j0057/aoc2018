@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 
-pub fn day01a(m: &[i64]) -> i64 {
+pub fn day01a(m: &[i32]) -> i32 {
     m.iter().sum()
 }
 
-pub fn day01b(deltas: &[i64]) -> i64 {
+pub fn day01b(deltas: &[i32]) -> i32 {
     let mut seen = HashSet::new();
-    let mut freq: i64 = 0;
+    let mut freq: i32 = 0;
     seen.insert(0);
     loop {
         for delta in deltas.iter() {
