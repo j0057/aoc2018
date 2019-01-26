@@ -5,6 +5,7 @@ import sys
 from functools import reduce
 
 def iterate(state, new):
+    '''iterate(state, new) --> yields state, then applies lambda `new` to state and sets state to its return value'''
     while 1:
         yield state
         state = new(state)
